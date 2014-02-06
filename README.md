@@ -2,7 +2,12 @@
 
 > Internationalization support for grunt.
 
-Fork of Grunt-i18n.
+Fork of Grunt-i18n.  Allows user to specify
+    options: {
+        defaultLocale: 'en_US'
+    }
+
+`en_US.(json/yaml)` would be the default locale file for instances when properties are not defined in other locale files.
 
 ## Getting started
 This plugin requires Grunt `~0.4.0`
