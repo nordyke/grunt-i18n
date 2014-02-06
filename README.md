@@ -3,6 +3,7 @@
 > Internationalization support for grunt.
 
 Fork of Grunt-i18n.  Allows user to specify
+
     options: {
         defaultLocale: 'en_US'
     }
