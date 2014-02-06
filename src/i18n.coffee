@@ -31,22 +31,27 @@ module.exports = (grunt) ->
 
     grunt.verbose.writeflags options, 'Options'
 
+    defaultLocalePath = grunt.file.expand options.defaultLocale
+
     for templatePath in @filesSrc
       if grunt.file.isFile templatePath
         localePaths = grunt.file.expand options.locales
         for localePath in localePaths
           outputPath = generateOutputPath templatePath, localePath, options
-          template = translateTemplate templatePath, localePath, options
+          template = translateTemplate templatePath, localePath, defaultLocalePath, options
           grunt.verbose.writeln "Translating '#{templatePath}' with locale '#{localePath}' to '#{outputPath}'."
           grunt.file.write outputPath, template
 
-  translateTemplate = (templatePath, localePath, options) ->
+  translateTemplate = (templatePath, localePath, defaultLocalePath, options) ->
     template = grunt.file.read templatePath
     if /(\.yaml|\.yml)$/.test(localePath)
       localeFileContent = grunt.file.readYAML localePath
+      defaultLocaleFileContent = grunt.file.readYAML defaultLocalePath
     else
       localeFileContent = grunt.file.readJSON localePath
+      defaultLocaleFileContent = grunt.file.readJSON defaultLocalePath
 
+    grunt.util._.defaults localeFileContent, defaultFileContent
     locale = parsers[options.format] localeFileContent
 
     templateOptions =

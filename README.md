@@ -2,6 +2,8 @@
 
 > Internationalization support for grunt.
 
+Fork of Grunt-i18n.
+
 ## Getting started
 This plugin requires Grunt `~0.4.0`
 
