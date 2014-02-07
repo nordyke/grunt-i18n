@@ -70,6 +70,7 @@ module.exports = function(grunt) {
     template = grunt.file.read(templatePath);
     if (/(\.yaml|\.yml)$/.test(localePath)) {
       localeFileContent = grunt.file.readYAML(localePath);
+      defaultLocaleFileContent = grunt.file.readYAML(defaultLocalePath);
     } else {
       localeFileContent = grunt.file.readJSON(localePath);
       defaultLocaleFileContent = grunt.file.readJSON(defaultLocalePath);
