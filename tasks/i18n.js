@@ -29,7 +29,7 @@ parsers = {
 module.exports = function(grunt) {
   var generateOutputPath, translateTemplate;
   grunt.registerMultiTask('i18n', 'Localize Grunt templates', function() {
-    var localePath, localePaths, options, outputPath, template, templatePath, _i, _len, _ref, _results;
+    var localePath, localePaths, defaultLocalePath, options, outputPath, template, templatePath, _i, _len, _ref, _results;
     options = this.options({
       locales: [],
       output: '.',
@@ -39,7 +39,9 @@ module.exports = function(grunt) {
     grunt.verbose.writeflags(options, 'Options');
 
     // Default Locale Path
-    defaultLocalePath = grunt.file.expand(options.defaultLocale);
+    if(options.defaultLocale){
+      defaultLocalePath = grunt.file.expand(options.defaultLocale);
+    }
 
     _ref = this.filesSrc;
     _results = [];
@@ -70,14 +72,17 @@ module.exports = function(grunt) {
     template = grunt.file.read(templatePath);
     if (/(\.yaml|\.yml)$/.test(localePath)) {
       localeFileContent = grunt.file.readYAML(localePath);
-      defaultLocaleFileContent = grunt.file.readYAML(defaultLocalePath);
+      if(defaultLocalePath){
+        defaultLocaleFileContent = grunt.file.readYAML(defaultLocalePath);
+      }
     } else {
       localeFileContent = grunt.file.readJSON(localePath);
-      defaultLocaleFileContent = grunt.file.readJSON(defaultLocalePath);
+      if(defaultLocalePath){
+        defaultLocaleFileContent = grunt.file.readJSON(defaultLocalePath);
+      }
     }
-
     // Merge default locale values.
-    grunt.util._.defaults(localeFileContent,defaultLocaleFileContent);
+    grunt.util._.defaults(localeFileContent,defaultLocaleFileContent || {});
 
     locale = parsers[options.format](localeFileContent);
     templateOptions = {
@@ -89,13 +94,16 @@ module.exports = function(grunt) {
     return grunt.template.process(template, templateOptions);
   };
   generateOutputPath = function(templatePath, localePath, options) {
-    var filePath, localeFolder, trimmedFilePath;
+    var filePath, localeFolder, trimmedFilePath, fileExtension, fileName;
     localeFolder = path.basename(localePath, path.extname(localePath));
     if (grunt.util._.startsWith(templatePath, options.base)) {
       filePath = templatePath.slice(options.base.length);
     }
+    fileExtension = filePath.split('.')[1];
+    fileName = [localeFolder, fileExtension].join('.');
     trimmedFilePath = grunt.util._.trim(filePath, '/');
-    return [options.output, localeFolder, trimmedFilePath].join('/');
+    return [options.output, fileName].join('/');
+    // return [options.output, localeFolder, trimmedFilePath].join('/');
   };
   return this;
 };
